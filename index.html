@@ -1,0 +1,632 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>小星的故事冒險｜兒童聽語互動遊戲輔助系統</title>
+<style>
+:root{
+  --cream:#fbf7ed;--paper:#fffdf8;--green:#345b46;--green2:#52775b;--sage:#dfe9d9;
+  --orange:#e9a45d;--orange-pale:#fff0dc;--ink:#28372d;--muted:#758176;--line:#e6e2d7;
+  --pink:#f4ded5;--blue:#e0e9ec;--shadow:0 12px 32px rgba(56,75,56,.09);--radius:22px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:ui-rounded,"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;line-height:1.55}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer;border:0}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #e6b56d;outline-offset:2px}
+.app{max-width:1160px;margin:auto;padding:20px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.brand{display:flex;align-items:center;gap:11px;font-weight:800;color:var(--green)}
+.brand-mark{width:43px;height:43px;border-radius:15px;background:var(--green);color:#fff;display:grid;place-items:center;font-size:23px;box-shadow:var(--shadow)}
+.brand small{display:block;font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.08em}
+.top-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{padding:11px 16px;border-radius:14px;font-weight:750;transition:transform .15s,background .15s}
+.btn:hover{transform:translateY(-1px)}
+.primary{background:var(--green);color:#fff}
+.primary:hover{background:#284735}
+.secondary{background:var(--sage);color:var(--green)}
+.ghost{background:transparent;border:1px solid var(--line);color:var(--green)}
+.soft{background:var(--orange-pale);color:#81532a}
+.small{padding:7px 10px;border-radius:11px;font-size:13px}
+main{min-height:60vh}
+.view{display:none;animation:fade .25s ease}
+.view.active{display:block}
+@keyframes fade{from{opacity:.35;transform:translateY(4px)}to{opacity:1;transform:none}}
+.hero{position:relative;overflow:hidden;background:linear-gradient(135deg,#e7efdf,#fff0d9 75%,#f5e2d8);border-radius:32px;padding:clamp(25px,5vw,58px);box-shadow:var(--shadow);min-height:320px;display:grid;grid-template-columns:1.2fr .8fr;align-items:center;gap:18px}
+.eyebrow{font-size:12px;letter-spacing:.12em;color:var(--green2);font-weight:850;text-transform:uppercase}
+h1,h2,h3,p{margin-top:0}
+h1{font-size:clamp(32px,5vw,55px);line-height:1.13;letter-spacing:-.04em;margin:12px 0 16px;color:var(--green)}
+.hero p{max-width:490px;color:#566756}
+.hero-art{display:grid;place-items:center;min-height:210px;position:relative}
+.sun{position:absolute;width:150px;height:150px;border-radius:50%;background:#f5cf85;right:12%;top:0;opacity:.8}
+.hill{position:absolute;bottom:10px;width:100%;height:100px;background:#b8cfad;border-radius:55% 45% 0 0}
+.hill.two{background:#8da98a;height:70px;bottom:0;transform:translateX(25%);opacity:.8}
+.bear{position:relative;z-index:2;font-size:clamp(100px,16vw,155px);filter:drop-shadow(0 10px 5px #758a6230)}
+.cloud{position:absolute;z-index:3;background:#fffaf0;padding:9px 13px;border-radius:18px;font-weight:800;box-shadow:var(--shadow);font-size:13px}
+.cloud.c1{top:23%;left:2%;transform:rotate(-5deg)}.cloud.c2{right:0;bottom:20%;transform:rotate(4deg)}
+.notice{background:#fff8e8;border:1px solid #f0ddb3;color:#765c2b;padding:12px 15px;border-radius:15px;font-size:13px;margin:16px 0}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
+.grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.section-head{display:flex;justify-content:space-between;align-items:end;gap:12px;margin:27px 0 14px}
+.section-head h2{margin:0;color:var(--green);font-size:24px}
+.muted{color:var(--muted);font-size:14px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:0 5px 18px #344b3510}
+.theme-card{position:relative;overflow:hidden;min-height:180px;display:flex;flex-direction:column;justify-content:space-between;gap:18px}
+.theme-icon{font-size:38px}.theme-card h3{margin:7px 0 4px;color:var(--green)}
+.theme-card p{font-size:13px;color:var(--muted);margin:0}
+.theme-card button{align-self:flex-start}
+.pill{display:inline-flex;align-items:center;gap:6px;background:#edf2e9;color:var(--green);padding:5px 10px;border-radius:99px;font-size:12px;font-weight:800}
+.page-title{display:flex;align-items:center;gap:10px;margin:10px 0 20px}
+.page-title h1{font-size:clamp(27px,4vw,38px);margin:0}
+.page-title .step{background:var(--orange-pale);color:#825528;border-radius:99px;padding:7px 11px;font-size:12px;font-weight:800;white-space:nowrap}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:clamp(17px,3vw,28px);box-shadow:var(--shadow)}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.field{display:flex;flex-direction:column;gap:7px;margin-bottom:12px}
+.field label{font-weight:800;font-size:14px;color:var(--green)}
+.field input,.field textarea,.field select{width:100%;border:1px solid #dcded2;border-radius:12px;background:#fffefb;padding:11px 12px;color:var(--ink)}
+.field textarea{min-height:82px;resize:vertical}
+.recommendation{background:#edf4e9;border-radius:16px;padding:16px;margin:14px 0;border:1px solid #d6e4d1}
+.recommendation strong{color:var(--green)}
+.theme-select{display:flex;gap:12px;flex-wrap:wrap}
+.theme-option{flex:1;min-width:145px;text-align:left;border:1px solid var(--line);background:#fffdf8;padding:16px;border-radius:17px;color:var(--ink)}
+.theme-option.selected{border:2px solid var(--green2);background:#edf4e9}
+.theme-option b{display:block;color:var(--green);margin:5px 0}
+.asset-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.asset-row:last-child{border:0}
+.asset-emoji{width:43px;height:43px;display:grid;place-items:center;border-radius:14px;background:#f3efe4;font-size:24px;flex-shrink:0}
+.asset-info{flex:1;min-width:0}.asset-info strong{display:block}.asset-info small{color:var(--muted)}
+.check{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:750}
+.check input{width:19px;height:19px;accent-color:var(--green)}
+.task-top{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:16px}
+.progress{height:8px;background:#e9e7dc;border-radius:99px;overflow:hidden;margin:10px 0 20px}
+.progress span{display:block;height:100%;background:var(--green2);width:0;transition:width .2s}
+.story-scene{background:linear-gradient(145deg,#e8f0df,#fff0d9);border-radius:20px;padding:23px;margin-bottom:18px}
+.scene-art{font-size:52px;letter-spacing:6px;margin-bottom:10px}
+.story-scene h2{font-size:23px;color:var(--green);margin-bottom:7px}
+.script{border-left:4px solid var(--orange);background:#fff7e9;border-radius:0 14px 14px 0;padding:14px 16px;margin:14px 0}
+.script strong{display:block;color:#85582b;font-size:12px;margin-bottom:4px}
+.tips{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tip{background:#f3f4eb;border-radius:14px;padding:13px;font-size:14px}
+.tip strong{display:block;color:var(--green);margin-bottom:4px}
+.responses{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:15px 0}
+.response{padding:12px;border:1px solid var(--line);border-radius:13px;background:#fffdf8;text-align:left;color:var(--ink);font-weight:750}
+.response.selected{background:#e5efe2;border:2px solid var(--green2);color:var(--green)}
+.response span{display:block;font-size:12px;color:var(--muted);font-weight:500;margin-top:3px}
+.actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:18px}
+.actions .btn{flex:1}
+.reward-list{display:flex;flex-wrap:wrap;gap:9px}
+.reward-chip{background:#fff0d9;border:1px solid #f1d4a6;color:#77552b;border-radius:14px;padding:10px 13px;font-weight:750}
+.history-item{display:flex;justify-content:space-between;gap:15px;align-items:center;padding:15px 0;border-bottom:1px solid var(--line)}
+.history-item:last-child{border:0}
+.empty{padding:30px 15px;text-align:center;color:var(--muted)}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}
+.kpi{background:#f4f3eb;border-radius:15px;padding:13px;text-align:center}
+.kpi strong{display:block;color:var(--green);font-size:24px}
+.kpi span{font-size:12px;color:var(--muted)}
+.footer{font-size:12px;color:var(--muted);text-align:center;padding:26px 8px 10px}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#263b2d;color:white;padding:12px 18px;border-radius:13px;box-shadow:var(--shadow);z-index:20;display:none;max-width:90vw}
+.modal-backdrop{position:fixed;inset:0;background:#18251ccc;display:none;align-items:center;justify-content:center;padding:18px;z-index:30}
+.modal{background:var(--paper);border-radius:22px;padding:25px;max-width:480px;width:100%;box-shadow:var(--shadow)}
+.modal h2{color:var(--green)}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+.hidden{display:none!important}
+@media(max-width:760px){
+ .app{padding:13px}.topbar{align-items:flex-start}.brand{font-size:14px}.brand-mark{width:38px;height:38px}
+ .top-actions .btn{padding:8px 10px;font-size:12px}.hero{grid-template-columns:1fr;min-height:unset;padding:28px}.hero-art{min-height:170px}.sun{right:20%;width:115px;height:115px}
+ .bear{font-size:120px}.grid,.grid.two{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.tips{grid-template-columns:1fr}.section-head{align-items:start;flex-direction:column}.page-title{align-items:flex-start;flex-direction:column}
+ .responses{grid-template-columns:1fr 1fr}.card{padding:17px}.history-item{align-items:flex-start;flex-direction:column}.kpis{gap:7px}.kpi{padding:10px 6px}
+}
+@media(min-width:761px) and (max-width:980px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hero{padding:35px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="topbar">
+  <div class="brand"><div class="brand-mark">✦</div><div>小星的故事冒險<small>兒童聽語互動遊戲輔助系統</small></div></div>
+  <div class="top-actions">
+    <button class="btn ghost small" data-nav="collection">🎖 收藏圖鑑</button>
+    <button class="btn ghost small" data-nav="history">📖 練習歷程</button>
+  </div>
+</header>
+<main>
+<section id="home" class="view active">
+  <div class="hero">
+    <div>
+      <div class="eyebrow">A LITTLE STORY, A BIG ADVENTURE</div>
+      <h1>今天，想和誰<br>一起冒險？</h1>
+      <p>拿起熟悉的公仔、配件與場景，讓每一次聽與說，都成為故事裡的小小發現。</p>
+      <button class="btn primary" id="startBtn">開始冒險　→</button>
+      <button class="btn soft" id="demoBtn" style="margin-left:6px">✨ 一鍵完整示範</button>
+    </div>
+    <div class="hero-art" aria-label="繪本風小熊與山丘">
+      <div class="sun"></div><div class="hill"></div><div class="hill two"></div>
+      <div class="bear">🐻</div><div class="cloud c1">出發吧！</div><div class="cloud c2">一起探索 🌱</div>
+    </div>
+  </div>
+  <div class="notice">🌿 <strong>原型說明：</strong>本網站使用預設情境與簡單規則模擬 AI，不連接真正 AI。它不是正式療育評估，也不能取代治療師判斷。</div>
+  <div class="section-head"><div><h2>故事世界</h2><div class="muted">選一個今天想去的地方</div></div><span class="pill">3 個主題可探索</span></div>
+  <div class="grid">
+    <article class="card theme-card"><div><div class="theme-icon">🌳</div><h3>冒險探索</h3><p>在公園尋找物件，和朋友一起完成小任務。</p></div><button class="btn secondary" data-theme="adventure">選擇主題 →</button></article>
+    <article class="card theme-card"><div><div class="theme-icon">🍞</div><h3>日常生活</h3><p>準備點心、整理物品，在生活中練習聽與說。</p></div><button class="btn secondary" data-theme="daily">選擇主題 →</button></article>
+    <article class="card theme-card"><div><div class="theme-icon">✨</div><h3>奇幻童話</h3><p>走進魔法森林，發現友善角色與故事寶物。</p></div><button class="btn secondary" data-theme="fantasy">選擇主題 →</button></article>
+  </div>
+  <div class="section-head"><div><h2>今天的小小收藏</h2><div class="muted">參與、探索與表達，都值得被記住。</div></div><button class="btn ghost small" data-nav="collection">查看全部 →</button></div>
+  <div id="homeRewards" class="reward-list"></div>
+</section>
+
+<section id="setup" class="view">
+  <div class="page-title"><span class="step">STEP 1 / 4</span><h1>今天的冒險準備</h1></div>
+  <div class="panel">
+    <div class="pill">🧸 模擬示範個案</div>
+    <h2 style="margin:12px 0;color:var(--green)">先認識今天的玩家</h2>
+    <div class="form-grid">
+      <div class="field"><label for="childName">孩子的稱呼（虛構資料）</label><input id="childName" value="小星" maxlength="20"></div>
+      <div class="field"><label for="ageRange">年齡區間</label><select id="ageRange"><option>3–5 歲</option></select></div>
+      <div class="field"><label for="baseline">目前能力描述（示範）</label><textarea id="baseline">正在練習理解簡單動作指令與常見物品詞彙。</textarea></div>
+      <div class="field"><label for="dailyState">今天的狀態</label><select id="dailyState"><option value="ready">精神不錯，願意探索</option><option value="quiet">比較安靜，需要多一點等待</option><option value="tired">有點累，建議放慢或縮短</option></select></div>
+      <div class="field" style="grid-column:1/-1"><label for="goal">治療師設定的主要目標（模擬，可編輯）</label><input id="goal" value="理解並執行簡單動作指令，搭配物品詞彙。"></div>
+      <div class="field"><label for="vocab">AI 輔助推薦：詞彙／句型</label><input id="vocab" value="球、熊、給、拿、找；「把 ___ 給 ___」。"></div>
+      <div class="field"><label for="parentNote">家長備註（選填）</label><textarea id="parentNote" placeholder="例如：今天比較想玩球……"></textarea></div>
+    </div>
+    <div class="recommendation"><strong>🌱 模擬 AI 建議</strong><p id="recommendText" style="margin:7px 0 0">以熟悉的物件與簡短指令開始；等待孩子反應，再視需要提供二選一。這是規則式示範建議，不是正式療育判斷。</p></div>
+    <div class="actions"><button class="btn ghost" data-nav="home">返回首頁</button><button class="btn primary" id="toThemes">確認目標，選故事 →</button></div>
+  </div>
+</section>
+
+<section id="themes" class="view">
+  <div class="page-title"><span class="step">STEP 2 / 4</span><h1>挑選今天的故事世界</h1></div>
+  <div class="panel">
+    <p class="muted">選擇會改變故事情境，但不會改變治療師設定的主要目標。</p>
+    <div class="theme-select" id="themeOptions">
+      <button class="theme-option selected" data-theme-choice="adventure"><span>🌳</span><b>冒險探索</b><small>公園尋物、角色合作</small></button>
+      <button class="theme-option" data-theme-choice="daily"><span>🍞</span><b>日常生活</b><small>點心準備、物品整理</small></button>
+      <button class="theme-option" data-theme-choice="fantasy"><span>✨</span><b>奇幻童話</b><small>魔法森林、故事寶物</small></button>
+    </div>
+    <div class="recommendation"><strong id="themeRecTitle">🌳 公園小冒險</strong><p id="themeRecText">小熊想在公園裡找到朋友需要的物品。請用今天已準備好的玩具，一起幫忙吧！</p></div>
+    <div class="actions"><button class="btn ghost" data-nav="setup">上一步</button><button class="btn primary" id="makeStory">生成故事與素材清單 →</button></div>
+  </div>
+</section>
+
+<section id="assets" class="view">
+  <div class="page-title"><span class="step">STEP 3 / 4</span><h1>確認今天準備好的素材</h1></div>
+  <div class="panel">
+    <div class="pill">🧺 故事已規劃 · 素材仍待家長確認</div>
+    <h2 id="storyTitle" style="color:var(--green);margin:12px 0 5px">公園裡的小小幫手</h2>
+    <p id="storySynopsis" class="muted">小熊需要幫忙找東西，和孩子一起完成五個小任務。</p>
+    <div class="notice">注意：資料庫中的素材不代表今天已經準備好。請逐項確認，只有確認後的素材才會進入遊戲。</div>
+    <div id="assetList"></div>
+    <div class="field" style="margin-top:18px"><label for="replaceAsset">需要替換缺少的素材時，選擇一個替代物件</label><select id="replaceAsset"></select></div>
+    <div class="actions"><button class="btn soft" id="replaceBtn">用替代物件調整故事</button><button class="btn ghost" id="backThemes">返回選主題</button><button class="btn primary" id="beginGame">素材確認完成，開始冒險 →</button></div>
+    <p id="assetMessage" class="muted" aria-live="polite" style="margin-top:12px"></p>
+  </div>
+</section>
+
+<section id="game" class="view">
+  <div class="task-top"><div><span class="pill" id="gameThemePill">🌳 冒險探索</span><h1 style="font-size:clamp(25px,4vw,35px);margin:10px 0 0" id="gameHeading">一起幫小熊</h1></div><button class="btn ghost small" id="gameEndTop">結束冒險</button></div>
+  <div class="panel">
+    <div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><strong id="taskCounter">第 1／5 個任務</strong><span class="muted" id="taskStatus">故事正在展開</span></div>
+    <div class="progress"><span id="progressBar"></span></div>
+    <div class="story-scene"><div class="scene-art" id="sceneArt">🐻 🏀 🌳</div><h2 id="taskTitle">把紅色球交給小熊</h2><p id="taskText">小熊找不到球，想請你幫忙。請拿起今天準備好的紅色球。</p><div class="pill" id="targetPill">練習焦點：理解「拿／給」</div></div>
+    <div class="script"><strong>🗣️ 家長可以這樣說</strong><div id="parentScript">「把紅色球給小熊。」</div></div>
+    <div class="tips"><div class="tip"><strong>🌱 提示策略</strong><span id="promptStrategy">說完後先等待幾秒；如果孩子需要協助，再提供示範。</span></div><div class="tip"><strong>💡 孩子有不同反應時</strong><span id="responseGuidance">若沒有反應，可簡化句子或提供二選一；不需要急著要求重複。</span></div></div>
+    <h3 style="margin:20px 0 6px;color:var(--green)">家長觀察到什麼反應？</h3>
+    <p class="muted" style="margin-bottom:8px">請依實際觀察選擇；若不確定，可先選「其他」並補充描述。</p>
+    <div class="responses" id="responseOptions">
+      <button class="response" data-response="done">😊 完成／有反應<span>記錄參與，繼續故事</span></button>
+      <button class="response" data-response="prompt">🌱 需要提示<span>提供更具體的協助</span></button>
+      <button class="response" data-response="none">🍃 沒有反應<span>等待或簡化指令</span></button>
+      <button class="response" data-response="word">💬 只說一個詞／部分表達<span>自然擴展孩子的表達</span></button>
+      <button class="response" data-response="idea">✨ 孩子提出新想法<span>在現有素材與目標內調整</span></button>
+      <button class="response" data-response="stop">🫶 拒絕／不想玩<span>尊重休息或結束</span></button>
+      <button class="response" data-response="other">📝 其他／特殊反應<span>請補充描述</span></button>
+    </div>
+    <div class="field"><label for="childWords">補充孩子的原話或特殊反應（選填）</label><textarea id="childWords" placeholder="例如：孩子說「熊想坐巴士」……"></textarea></div>
+    <div id="branchPreview" class="recommendation hidden" aria-live="polite"><strong>🌿 接下來可以這樣做</strong><p id="branchText" style="margin:6px 0 0"></p></div>
+    <div class="actions"><button class="btn soft" id="restBtn">休息一下</button><button class="btn primary" id="reportBtn">回報並繼續 →</button></div>
+    <p class="muted" style="margin-top:12px">本系統只整理家長回報，不判定孩子「會／不會」，也不取代專業建議。</p>
+  </div>
+</section>
+
+<section id="summary" class="view">
+  <div class="page-title"><span class="step">ADVENTURE COMPLETE</span><h1>今天的故事，謝謝你一起完成</h1></div>
+  <div class="panel">
+    <div class="story-scene"><div class="scene-art">🌟 🐻 🌿</div><h2 id="endingTitle">小小冒險家，辛苦了！</h2><p id="endingText">每一次探索和表達，都讓故事多了一點色彩。</p></div>
+    <div class="kpis"><div class="kpi"><strong id="kpiReported">0/5</strong><span>已回報任務</span></div><div class="kpi"><strong id="kpiUnreported">5</strong><span>未回報任務</span></div><div class="kpi"><strong id="kpiRewards">0</strong><span>本次收藏</span></div></div>
+    <h3 style="color:var(--green)">這次冒險的回報</h3><div id="summaryTasks"></div>
+    <div class="field" style="margin-top:15px"><label for="summaryNote">家長整體備註（選填）</label><textarea id="summaryNote" placeholder="記下今天想留給自己的小提醒……"></textarea></div>
+    <div class="notice">這份摘要只整理家長實際回報的內容。未回報項目會明確標示，不推測孩子的能力或表現；本原型不是正式療育評估。</div>
+    <div class="actions"><button class="btn secondary" id="saveSummary">保存這次紀錄</button><button class="btn primary" id="newAdventure">開啟新冒險 →</button><button class="btn ghost" data-nav="home">回首頁</button></div>
+  </div>
+</section>
+
+<section id="collection" class="view">
+  <div class="page-title"><span class="step">MY LITTLE TREASURES</span><h1>收藏圖鑑</h1></div>
+  <div class="panel"><p class="muted">收藏是故事的小紀念，不是答對題目的獎品。休息或提早結束不會失去已獲得的收藏。</p><div id="collectionList" class="grid two"></div><div class="actions"><button class="btn primary" data-nav="home">回到故事首頁</button></div></div>
+</section>
+
+<section id="history" class="view">
+  <div class="page-title"><span class="step">YOUR STORY JOURNAL</span><h1>練習歷程</h1></div>
+  <div class="panel"><p class="muted">這裡只顯示本機瀏覽器保存的模擬冒險紀錄。</p><div id="historyList"></div><div id="historyDetail" class="recommendation hidden"></div><div class="actions"><button class="btn primary" id="newFromHistory">開啟新冒險</button><button class="btn ghost" data-nav="home">回首頁</button><button class="btn ghost" id="clearData">清除本機模擬資料</button></div></div>
+</section>
+
+<section id="info" class="view">
+  <div class="page-title"><span class="step">ABOUT THIS PROTOTYPE</span><h1>資料與使用限制</h1></div>
+  <div class="panel">
+    <h2 style="color:var(--green)">這是一個模擬原型</h2>
+    <p>本網站使用預設故事、關鍵字規則與瀏覽器本機儲存，不連接真正 AI API、語音辨識或雲端資料庫。</p>
+    <p>所有孩子資料皆為示範資料。遊戲紀錄只反映家長實際回報，不具診斷能力，也不能取代治療師的專業判斷。</p>
+    <p>資料通常只保存在目前瀏覽器與裝置。清除瀏覽器資料或使用不同裝置，不保證能保留或同步紀錄。</p>
+    <div class="actions"><button class="btn ghost" data-nav="home">返回首頁</button><button class="btn soft" id="clearFromInfo">清除本機模擬資料</button></div>
+  </div>
+</section>
+</main>
+<footer class="footer">一餐一故事，一步一探索。此原型僅供設計展示與流程測試。<br><button class="btn ghost small" data-nav="info" style="margin-top:10px">資料與使用限制</button></footer>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal"><h2 id="modalTitle">請確認</h2><p id="modalText">要繼續嗎？</p><div class="modal-actions"><button class="btn ghost" id="modalCancel">取消</button><button class="btn primary" id="modalConfirm">確認</button></div></div>
+</div>
+
+<script>
+(() => {
+"use strict";
+const STORE_KEY = "littleStorySpeechPrototype_v1";
+const themes = {
+ adventure:{name:"冒險探索",icon:"🌳",title:"公園裡的小小幫手",synopsis:"小熊在公園裡找不到需要的物品，邀請你用今天準備好的玩具一起幫忙。",art:"🐻 🏀 🌳"},
+ daily:{name:"日常生活",icon:"🍞",title:"準備點心的好朋友",synopsis:"小熊想準備點心，請你一起找出物品、拿給朋友，完成溫暖的小任務。",art:"🐻 🍌 🍞"},
+ fantasy:{name:"奇幻童話",icon:"✨",title:"魔法森林的友善任務",synopsis:"小熊收到一張神祕邀請卡，要和朋友一起找到故事需要的物件。",art:"🐻 ✨ 🌲"}
+};
+const defaultAssets = [
+ {id:"bear",name:"小熊公仔",emoji:"🧸",category:"角色／公仔",vocab:["熊","給","拿"],actions:["給","拿","坐"],availableToday:false},
+ {id:"ball",name:"紅色球",emoji:"🔴",category:"球／小物件",vocab:["球","紅色","拿"],actions:["拿","給","找"],availableToday:false},
+ {id:"bus",name:"巴士",emoji:"🚌",category:"交通工具",vocab:["巴士","車","坐"],actions:["坐","走","找"],availableToday:false},
+ {id:"banana",name:"香蕉",emoji:"🍌",category:"食物",vocab:["香蕉","吃","給"],actions:["拿","給","找"],availableToday:false},
+ {id:"bread",name:"麵包",emoji:"🍞",category:"食物",vocab:["麵包","吃","給"],actions:["拿","給","找"],availableToday:false},
+ {id:"park",name:"公園場景底板",emoji:"🌳",category:"場景",vocab:["公園","樹"],actions:["找","走"],availableToday:false}
+];
+const tasksByTheme = {
+ adventure:[
+  {title:"把紅色球交給小熊",text:"小熊找不到球，想請你幫忙。請拿起今天準備好的紅色球。",target:"理解「拿／給」與物品詞彙",script:"把紅色球給小熊。",strategy:"說完後先等待幾秒；如果孩子需要協助，再提供示範。",guidance:"若沒有反應，可簡化成「給熊」或提供二選一；不需要急著要求重複。",assets:["bear","ball"],art:"🐻 🔴 🌳"},
+  {title:"找出故事需要的物品",text:"小熊想找一樣東西。請從今天準備好的物件中，找出家長說的那一個。",target:"理解常見物品名稱",script:"請找出球（也可依已準備素材改成其他物件）。",strategy:"一次只說一個物件名稱，給孩子時間看一看、找一找。",guidance:"若需要提示，可指向兩個已準備的物件讓孩子選；若物件未確認，先改用可用素材。",assets:["ball","bear"],art:"🔎 🧸 🔴"},
+  {title:"讓角色做一個動作",text:"小熊想和大家一起動一動。選一個已準備好的角色或物件，做一個簡單動作。",target:"理解簡單動作指令",script:"讓小熊坐下，或把球拿起來。",strategy:"動作可以由家長先示範一次，不要求孩子一定照做才算參與。",guidance:"若孩子只說「坐」，可以自然回應「對，小熊坐下了」。",assets:["bear"],art:"🧸 💺 🌱"},
+  {title:"孩子來選故事方向",text:"小熊想繼續冒險。你想讓小熊找球、坐巴士，還是吃點心？也可以說出自己的想法。",target:"表達選擇與理解簡短句子",script:"你想讓小熊做什麼？",strategy:"提供兩到三個選項，也接受孩子用手指、動作或單詞表達。",guidance:"若孩子提出新想法，先確認所需物件已準備，再決定是否能融入故事。",assets:["bear"],art:"💭 🐻 ✨"},
+  {title:"一起完成公園故事",text:"小熊謝謝你幫忙。選一個已確認的物件，讓小熊和朋友一起完成最後的小情節。",target:"在故事中重複使用目標詞彙",script:"我們一起把故事收好吧。你想把哪個物件交給小熊？",strategy:"用自然的生活語句收尾，讓孩子有機會再選一次。",guidance:"如果孩子想結束，就直接溫和收尾；未完成的任務標記為未回報。",assets:["bear"],art:"🌟 🧸 🌳"}
+ ],
+ daily:[
+  {title:"拿一樣點心給小熊",text:"小熊準備吃點心，請幫忙拿出今天準備好的食物。",target:"理解物品詞彙與「拿／給」",script:"請拿一個點心給小熊。",strategy:"先讓孩子看見兩個可用物件，再說簡短指令。",guidance:"若需要提示，提供香蕉或麵包二選一；接受指向或單詞回應。",assets:["bear","banana"],art:"🐻 🍌 🍞"},
+  {title:"找找看要吃什麼",text:"小熊想知道桌上有哪些點心。一起找出一樣食物。",target:"理解常見食物名稱",script:"你找到什麼了？",strategy:"先命名物件，再留時間讓孩子回應。",guidance:"若孩子只說「麵包」，可回應「對，是麵包」。",assets:["banana","bread"],art:"🔎 🍌 🍞"},
+  {title:"把點心放好",text:"我們把點心送到小熊面前，讓故事繼續。",target:"理解簡單動作指令",script:"把麵包放在小熊旁邊。",strategy:"可以先示範「放在旁邊」，再邀請孩子試試看。",guidance:"若沒有反應，改成更短的「麵包放這裡」，並指向位置。",assets:["bear","bread"],art:"🧸 🍞"},
+  {title:"選擇今天的點心",text:"小熊還想再選一樣點心。你想選香蕉還是麵包？也可以說出自己的選擇。",target:"表達選擇與詞彙",script:"你想選哪一個？",strategy:"讓孩子指、拿、說或用其他方式表達。",guidance:"若孩子提出其他食物，先確認實體素材是否已準備；沒有就改用現有選項。",assets:["banana","bread"],art:"💭 🍌 🍞"},
+  {title:"一起收拾點心",text:"點心時間快結束了，讓我們把物件交回給小熊。",target:"重複使用物品詞彙與動作指令",script:"把你選的點心交給小熊。",strategy:"用自然語句收尾，允許孩子選擇要先收哪一個。",guidance:"若孩子想停下來，尊重意願並保存已回報的內容。",assets:["bear","banana"],art:"🌟 🐻 🍞"}
+ ],
+ fantasy:[
+  {title:"找到森林的紅色寶物",text:"小熊收到魔法森林的邀請，要找到一件紅色寶物。",target:"理解物品詞彙與簡單指令",script:"請找出紅色球，交給小熊。",strategy:"一次給一個明確指令，先等待再視情況提示。",guidance:"若沒有反應，可把指令縮短成「找球」；不要求機械重複。",assets:["bear","ball"],art:"🐻 🔴 ✨"},
+  {title:"幫朋友找交通工具",text:"森林朋友想出發旅行。請找出今天已準備好的交通工具。",target:"理解交通工具詞彙",script:"巴士在哪裡？請找一找。",strategy:"如果已確認巴士素材，放在孩子看得到的位置。",guidance:"如果巴士沒有準備好，必須先在素材清單替換，不能直接使用。",assets:["bus"],art:"🚌 🌲 🔎"},
+  {title:"讓小熊坐上巴士",text:"小熊找到巴士了。請用實體玩具演出一個簡單動作。",target:"理解動作詞彙「坐」",script:"讓小熊坐上巴士。",strategy:"可先示範一次，再等待孩子嘗試。",guidance:"若孩子只說「車」，可自然擴展「對，巴士來了」。",assets:["bear","bus"],art:"🐻 🚌"},
+  {title:"孩子決定下一站",text:"巴士要去哪裡？你可以選擇公園或點心站，也可以說出自己的想法。",target:"表達選擇與理解簡短情境",script:"你想讓小熊去哪裡？",strategy:"提供兩個選項，也接受孩子用動作或單詞表達。",guidance:"若孩子提出新場景，先確認是否有相應實體素材，否則以現有場景改寫。",assets:["bear","bus"],art:"💭 🚌 ✨"},
+  {title:"完成森林的小任務",text:"小熊和朋友完成了冒險。選一個已確認的物件，為故事畫下句點。",target:"重複使用目標詞彙與動作指令",script:"你想把哪一個物件交給小熊？",strategy:"鼓勵選擇與共同收尾，不把答對當作唯一目標。",guidance:"若孩子不想繼續，可以直接結束並保存已回報資料。",assets:["bear"],art:"🌟 🐻 🌲"}
+ ]
+};
+const rewardCatalog = [
+ {id:"leaf",name:"森林小葉貼紙",emoji:"🍃",desc:"為今天的探索留下紀念。"},
+ {id:"star",name:"勇敢星星徽章",emoji:"⭐",desc:"每一次嘗試都值得被記住。"},
+ {id:"story",name:"故事紀念卡",emoji:"📜",desc:"把小小冒險收進圖鑑。"},
+ {id:"sun",name:"暖陽貼紙",emoji:"🌞",desc:"謝謝你一起參與故事。"},
+ {id:"flower",name:"小花徽章",emoji:"🌼",desc:"故事裡多了一點新發現。"}
+];
+let state = loadState();
+let selectedTheme = "adventure";
+let selectedResponse = "";
+let currentSession = null;
+let pendingModalAction = null;
+let toastTimer = null;
+
+function defaultState(){return {child:{name:"小星",age:"3–5 歲",baseline:"正在練習理解簡單動作指令與常見物品詞彙。",goal:"理解並執行簡單動作指令，搭配物品詞彙。",vocab:"球、熊、給、拿、找；「把 ___ 給 ___」。",dailyState:"ready",parentNote:""},assets:defaultAssets.map(a=>({...a})),rewards:[],sessions:[],activeSession:null};}
+function loadState(){try{const raw=localStorage.getItem(STORE_KEY);if(!raw)return defaultState();const parsed=JSON.parse(raw);const d=defaultState();return {...d,...parsed,child:{...d.child,...parsed.child},assets:Array.isArray(parsed.assets)?parsed.assets:d.assets,rewards:Array.isArray(parsed.rewards)?parsed.rewards:[],sessions:Array.isArray(parsed.sessions)?parsed.sessions:[]};}catch(e){return defaultState();}}
+function persist(){try{localStorage.setItem(STORE_KEY,JSON.stringify(state));return true;}catch(e){toast("目前無法保存資料；本次操作仍可繼續。");return false;}}
+function toast(message){const el=document.getElementById("toast");el.textContent=message;el.style.display="block";clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.style.display="none",2800);}
+function show(id){document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active",v.id===id));window.scrollTo({top:0,behavior:"smooth"});if(id==="collection")renderCollection();if(id==="history")renderHistory();if(id==="home")renderHomeRewards();}
+function nav(id){show(id);}
+function safeText(v){return String(v??"");}
+function themeInfo(){return themes[selectedTheme]||themes.adventure;}
+function assetById(id){return state.assets.find(a=>a.id===id);}
+function getTaskTemplates(){return tasksByTheme[selectedTheme]||tasksByTheme.adventure;}
+function createSession(){
+ const templates=getTaskTemplates();
+ const id="session-"+Date.now();
+ currentSession={id,themeId:selectedTheme,themeName:themeInfo().name,storyTitle:themeInfo().title,storySynopsis:themeInfo().synopsis,primaryGoal:state.child.goal,startedAt:new Date().toISOString(),endedAt:null,status:"preparing",tasks:templates.map((t,i)=>({...t,id:id+"-task-"+(i+1),index:i+1,status:"pending",response:null,note:"",branch:"",usedAssetIds:[...t.assets]})),reportedCount:0,rewardIds:[],summaryNote:"",isDemoSession:true};
+ state.activeSession=currentSession;persist();
+}
+function saveChildFromForm(){
+ state.child.name=document.getElementById("childName").value.trim()||"小星";
+ state.child.age=document.getElementById("ageRange").value;
+ state.child.baseline=document.getElementById("baseline").value.trim();
+ state.child.dailyState=document.getElementById("dailyState").value;
+ state.child.goal=document.getElementById("goal").value.trim()||"理解並執行簡單動作指令，搭配物品詞彙。";
+ state.child.vocab=document.getElementById("vocab").value.trim();
+ state.child.parentNote=document.getElementById("parentNote").value.trim();
+ const rec={ready:"以熟悉物件與簡短指令開始；等待孩子反應，再視需要提供二選一。",quiet:"今天可以放慢節奏，多留一些等待時間；不必急著完成所有任務。",tired:"建議縮短活動或提早結束，保留孩子選擇休息的空間。"};
+ document.getElementById("recommendText").textContent=rec[state.child.dailyState]||rec.ready;
+ persist();
+}
+function loadChildForm(){
+ document.getElementById("childName").value=state.child.name;
+ document.getElementById("ageRange").value=state.child.age;
+ document.getElementById("baseline").value=state.child.baseline;
+ document.getElementById("dailyState").value=state.child.dailyState;
+ document.getElementById("goal").value=state.child.goal;
+ document.getElementById("vocab").value=state.child.vocab;
+ document.getElementById("parentNote").value=state.child.parentNote||"";
+ saveRecommendationOnly();
+}
+function saveRecommendationOnly(){
+ const rec={ready:"以熟悉物件與簡短指令開始；等待孩子反應，再視需要提供二選一。",quiet:"今天可以放慢節奏，多留一些等待時間；不必急著完成所有任務。",tired:"建議縮短活動或提早結束，保留孩子選擇休息的空間。"};
+ document.getElementById("recommendText").textContent=rec[state.child.dailyState]||rec.ready;
+}
+function chooseTheme(id){if(!themes[id])return;selectedTheme=id;document.querySelectorAll("[data-theme-choice]").forEach(b=>b.classList.toggle("selected",b.dataset.themeChoice===id));const t=themes[id];document.getElementById("themeRecTitle").textContent=t.icon+" "+t.title;document.getElementById("themeRecText").textContent=t.synopsis;show("themes");}
+function buildStory(){
+ createSession();
+ const s=currentSession;
+ document.getElementById("storyTitle").textContent=s.storyTitle;
+ document.getElementById("storySynopsis").textContent=s.storySynopsis;
+ renderAssets();
+ document.getElementById("assetMessage").textContent="";
+ show("assets");
+}
+function renderAssets(){
+ if(!currentSession)return;
+ const needed=new Set(currentSession.tasks.flatMap(t=>t.usedAssetIds));
+ const list=document.getElementById("assetList");list.innerHTML="";
+ state.assets.forEach(a=>{
+  const row=document.createElement("div");row.className="asset-row";
+  const used=needed.has(a.id);
+  row.innerHTML=`<div class="asset-emoji">${a.emoji}</div><div class="asset-info"><strong>${escapeHTML(a.name)} ${used?'<span class="pill">故事需要</span>':''}</strong><small>${escapeHTML(a.category)} · ${a.availableToday?"已確認準備":"尚未確認"}</small></div><label class="check"><input type="checkbox" data-asset-check="${a.id}" ${a.availableToday?"checked":""}> 已準備</label>`;
+  list.appendChild(row);
+ });
+ const sel=document.getElementById("replaceAsset");sel.innerHTML="";
+ state.assets.forEach(a=>{const op=document.createElement("option");op.value=a.id;op.textContent=a.emoji+" "+a.name;sel.appendChild(op);});
+}
+function escapeHTML(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function syncAssetChecks(){
+ document.querySelectorAll("[data-asset-check]").forEach(ch=>{const a=assetById(ch.dataset.assetCheck);if(a){a.availableToday=ch.checked;}});
+ persist();
+}
+function missingRequired(){
+ if(!currentSession)return [];
+ const ids=new Set(currentSession.tasks.flatMap(t=>t.usedAssetIds));
+ return [...ids].map(assetById).filter(a=>!a||!a.availableToday);
+}
+function replaceMissing(){
+ if(!currentSession)return;
+ syncAssetChecks();
+ const missing=missingRequired();
+ if(!missing.length){toast("目前故事需要的素材都已確認。");return;}
+ const replacementId=document.getElementById("replaceAsset").value;
+ const replacement=assetById(replacementId);
+ if(!replacement){toast("請先選擇替代物件。");return;}
+ const missingIds=new Set(missing.map(a=>a.id));
+ let changed=0;
+ currentSession.tasks.forEach(task=>{
+  task.usedAssetIds=task.usedAssetIds.map(id=>{
+   if(!missingIds.has(id))return id;
+   const compatible = replacement.category===assetById(id)?.category ||
+      (task.target.includes("物品") && ["食物","球／小物件","交通工具"].includes(replacement.category)) ||
+      replacement.id==="bear";
+   if(compatible){changed++;return replacement.id;}
+   return id;
+  });
+ });
+ // If selected object is not compatible with a particular missing item, do not silently swap it.
+ const stillMissing=missingRequired();
+ currentSession.tasks.forEach(task=>{task.assets=[...task.usedAssetIds];});
+ currentSession.storySynopsis += "（已依家長選擇調整素材；請再次檢查清單。）";
+ state.activeSession=currentSession;persist();renderAssets();
+ document.getElementById("storySynopsis").textContent=currentSession.storySynopsis;
+ document.getElementById("assetMessage").textContent=changed?`已將 ${changed} 個故事素材需求調整為「${replacement.name}」。請再次確認所有需要的素材。`:"這個替代物件不適合目前任務，故事沒有變更。請選擇更相容的素材。";
+ if(changed)toast("故事素材已調整，請再次確認。");
+}
+function beginGame(){
+ syncAssetChecks();
+ const missing=missingRequired();
+ if(missing.length){document.getElementById("assetMessage").textContent="還有素材尚未確認："+missing.map(a=>a.name).join("、")+"。請確認已準備或先調整故事。";toast("請先確認所有故事需要的素材。");return;}
+ if(!currentSession){toast("請先生成故事。");return;}
+ currentSession.status="playing";currentSession.currentIndex=0;state.activeSession=currentSession;persist();renderTask();show("game");
+}
+function currentTask(){return currentSession?.tasks[currentSession.currentIndex]||null;}
+function renderTask(){
+ const task=currentTask();if(!task)return finishSession(false);
+ selectedResponse="";document.querySelectorAll("[data-response]").forEach(b=>b.classList.remove("selected"));
+ document.getElementById("childWords").value=task.note||"";
+ document.getElementById("gameThemePill").textContent=themeInfo().icon+" "+themeInfo().name;
+ document.getElementById("gameHeading").textContent=currentSession.storyTitle;
+ document.getElementById("taskCounter").textContent=`第 ${task.index}／5 個任務`;
+ document.getElementById("taskStatus").textContent=task.status==="reported"?"已回報":"故事正在展開";
+ document.getElementById("progressBar").style.width=((task.index-1)/5*100)+"%";
+ document.getElementById("sceneArt").textContent=task.art;
+ document.getElementById("taskTitle").textContent=task.title;
+ document.getElementById("taskText").textContent=task.text;
+ document.getElementById("targetPill").textContent="練習焦點："+task.target;
+ document.getElementById("parentScript").textContent=task.script;
+ document.getElementById("promptStrategy").textContent=task.strategy;
+ document.getElementById("responseGuidance").textContent=task.guidance;
+ document.getElementById("branchPreview").classList.add("hidden");
+ document.getElementById("reportBtn").textContent=task.index===5?"回報並看故事結局 →":"回報並繼續 →";
+}
+const responseNames={done:"完成／有反應",prompt:"需要提示",none:"沒有反應",word:"只說一個詞／部分表達",idea:"孩子提出新想法",stop:"拒絕／不想玩",other:"其他／特殊反應"};
+function interpretResponse(type,note){
+ const txt=(note||"").trim();
+ if(type==="stop")return {branch:"respect-stop",message:"可以先停下來，溫和地說：「好，我們可以休息，謝謝你陪小熊玩。」不需要為了完成任務而勉強孩子。",end:true};
+ if(type==="none")return {branch:"gentle-prompt",message:"先安靜等待幾秒，再把句子縮短，或用兩個已確認的物件提供選擇。不要直接判定孩子不會。"};
+ if(type==="prompt")return {branch:"more-support",message:"先示範一次，或提供更具體的二選一；維持同一個主要目標，讓孩子有時間參與。"};
+ if(type==="word")return {branch:"expand-language",message:"接納孩子的部分表達，家長可以自然擴展一句，例如孩子說「球」，回應「對，紅色的球」。不必要求機械重複。"};
+ if(type==="idea"){
+  const found=state.assets.find(a=>a.availableToday&&txt.includes(a.name));
+  if(txt && !found && /(巴士|球|香蕉|麵包|熊|公園|火車|貓|狗)/.test(txt)){
+   return {branch:"check-material",message:"孩子提出了新的故事方向。請先確認相關物件是否已在今天的素材清單中；若沒有，請由家長選擇現有素材改寫，不要直接加入新物件。",needsParent:true};
+  }
+  return {branch:"guided-flex",message:"可以接納孩子的想法；先確認玩法能使用已準備的素材，並把主要練習目標保留在故事裡。"};
+ }
+ if(type==="other"){
+  if(!txt)return {branch:"unknown",message:"我還不能確定孩子的意思。請補充觀察，或由家長選擇「需要提示」、「沒有反應」或「休息／結束」。",needsParent:true};
+  if(/不想玩|不要|不玩|累了|不想/.test(txt))return {branch:"possible-stop",message:"文字可能表示孩子想停下來。請家長確認孩子是否需要休息或結束，不要只依關鍵字自動判定。",needsParent:true};
+  if(/球|熊|巴士|香蕉|麵包|公園/.test(txt))return {branch:"keyword-noted",message:"補充文字提到故事物件。請家長確認該物件已準備，並自行選擇是否把這個想法融入故事。",needsParent:true};
+  return {branch:"unknown",message:"我還不能確定孩子的意思。請由家長決定下一步；可以先使用簡短指令、等待，或提供二選一。",needsParent:true};
+ }
+ if(type==="done")return {branch:"continue-story",message:"謝謝孩子一起參與！可以用自然的話肯定探索，再接續故事的下一個小任務。"};
+ return {branch:"continue-story",message:"請依孩子當下狀態選擇下一步。"};
+}
+function selectResponse(type){
+ selectedResponse=type;document.querySelectorAll("[data-response]").forEach(b=>b.classList.toggle("selected",b.dataset.response===type));
+ const preview=interpretResponse(type,document.getElementById("childWords").value);
+ document.getElementById("branchText").textContent=preview.message;
+ document.getElementById("branchPreview").classList.remove("hidden");
+}
+function recordTask(){
+ if(!selectedResponse){toast("請先選擇孩子的反應，或選「其他」補充觀察。");return;}
+ const task=currentTask();if(!task)return;
+ const note=document.getElementById("childWords").value.trim();
+ const result=interpretResponse(selectedResponse,note);
+ if(result.needsParent && !confirm(result.message+"\n\n請確認你要依照這個建議繼續。"))return;
+ task.status="reported";task.response=selectedResponse;task.note=note;task.branch=result.branch;task.branchMessage=result.message;task.reportedAt=new Date().toISOString();
+ currentSession.reportedCount=currentSession.tasks.filter(t=>t.status==="reported").length;
+ if(selectedResponse==="stop"){
+  if(confirm("要保存已回報內容並提前結束這次冒險嗎？")){finishSession(true);return;}
+  task.status="reported";
+ }
+ if(currentSession.currentIndex<4){currentSession.currentIndex++;state.activeSession=currentSession;persist();renderTask();show("game");}
+ else finishSession(false);
+}
+function finishSession(endedEarly){
+ if(!currentSession)return;
+ currentSession.status=endedEarly?"endedEarly":"completed";
+ currentSession.endedAt=new Date().toISOString();
+ currentSession.reportedCount=currentSession.tasks.filter(t=>t.status==="reported").length;
+ // Reward is for participation / story closure, never correctness; issue once per session.
+ if(!currentSession.rewardIds.length){
+  const reward=rewardCatalog.find(r=>!state.rewards.some(x=>x.id===r.id))||rewardCatalog[currentSession.tasks.length%rewardCatalog.length];
+  currentSession.rewardIds=[reward.id];
+  if(!state.rewards.some(x=>x.id===reward.id))state.rewards.push({...reward,unlockedAt:new Date().toISOString(),sourceSessionId:currentSession.id});
+ }
+ state.activeSession=currentSession;persist();renderSummary();show("summary");
+}
+function renderSummary(){
+ if(!currentSession)return;
+ document.getElementById("endingTitle").textContent=currentSession.status==="endedEarly"?"謝謝你一起參與這段故事":"小小冒險家，謝謝你一起完成";
+ document.getElementById("endingText").textContent=currentSession.status==="endedEarly"?"故事可以在任何時候停下來。已經回報的內容會被保留，其他項目不會被猜測。":"每一次探索、選擇與表達，都讓故事多了一點色彩。";
+ const reported=currentSession.tasks.filter(t=>t.status==="reported").length;
+ document.getElementById("kpiReported").textContent=reported+"/5";
+ document.getElementById("kpiUnreported").textContent=5-reported;
+ document.getElementById("kpiRewards").textContent=currentSession.rewardIds.length;
+ const list=document.getElementById("summaryTasks");list.innerHTML="";
+ currentSession.tasks.forEach(t=>{
+  const div=document.createElement("div");div.className="history-item";
+  const result=t.status==="reported"?`${responseNames[t.response]||t.response}${t.note?"｜補充："+t.note:""}`:"未回報";
+  div.innerHTML=`<div><strong>${t.index}. ${escapeHTML(t.title)}</strong><div class="muted">${escapeHTML(result)}</div>${t.branchMessage?`<div class="muted">系統分支：${escapeHTML(t.branchMessage)}</div>`:""}</div><span class="pill">${t.status==="reported"?"已回報":"未回報"}</span>`;
+  list.appendChild(div);
+ });
+ document.getElementById("summaryNote").value=currentSession.summaryNote||"";
+}
+function saveSummary(){
+ if(!currentSession)return;
+ currentSession.summaryNote=document.getElementById("summaryNote").value.trim();
+ const idx=state.sessions.findIndex(s=>s.id===currentSession.id);
+ const saved=JSON.parse(JSON.stringify(currentSession));
+ if(idx>=0)state.sessions[idx]=saved;else state.sessions.unshift(saved);
+ state.sessions.sort((a,b)=>new Date(b.startedAt)-new Date(a.startedAt));
+ state.activeSession=null;persist();toast("這次模擬冒險已保存到本機歷程。");renderHistory();
+}
+function newAdventure(){
+ if(currentSession && !["completed","endedEarly"].includes(currentSession.status)){
+  showModal("開啟新冒險？","目前這次冒險尚未結束。若開新冒險，未保存的本次內容可能不會加入歷程。",()=>{
+   currentSession=null;state.activeSession=null;persist();selectedResponse="";loadChildForm();show("setup");
+  });return;
+ }
+ currentSession=null;state.activeSession=null;selectedResponse="";persist();loadChildForm();selectedTheme="adventure";chooseTheme("adventure");show("setup");
+}
+function renderCollection(){
+ const list=document.getElementById("collectionList");list.innerHTML="";
+ rewardCatalog.forEach(r=>{
+  const unlocked=state.rewards.find(x=>x.id===r.id);
+  const card=document.createElement("article");card.className="card";
+  card.innerHTML=`<div style="font-size:34px">${unlocked?r.emoji:"🔒"}</div><h3 style="margin:8px 0;color:var(--green)">${escapeHTML(r.name)}</h3><p class="muted">${escapeHTML(r.desc)}</p><span class="pill">${unlocked?"已收藏":"尚未解鎖"}</span>${unlocked?`<p class="muted" style="margin-top:10px">獲得日期：${new Date(unlocked.unlockedAt).toLocaleDateString("zh-TW")}</p>`:""}`;
+  list.appendChild(card);
+ });
+}
+function renderHomeRewards(){
+ const list=document.getElementById("homeRewards");if(!list)return;list.innerHTML="";
+ if(!state.rewards.length){list.innerHTML='<div class="muted">完成一段冒險後，就能把故事紀念品收進圖鑑。</div>';return;}
+ state.rewards.slice(0,4).forEach(r=>{const chip=document.createElement("div");chip.className="reward-chip";chip.textContent=r.emoji+" "+r.name;list.appendChild(chip);});
+}
+function renderHistory(){
+ const list=document.getElementById("historyList");if(!list)return;list.innerHTML="";
+ if(!state.sessions.length){list.innerHTML='<div class="empty">目前還沒有保存的模擬紀錄。完成一次冒險後，記得按「保存這次紀錄」。</div>';return;}
+ state.sessions.forEach(s=>{
+  const item=document.createElement("div");item.className="history-item";
+  const dt=s.startedAt?new Date(s.startedAt).toLocaleString("zh-TW"):"時間未記錄";
+  item.innerHTML=`<div><strong>${escapeHTML(s.storyTitle||"故事冒險")}</strong><div class="muted">${escapeHTML(s.themeName||"")} · ${dt} · 已回報 ${s.reportedCount||0}/5</div></div><button class="btn secondary small" data-history-detail="${s.id}">查看摘要</button>`;
+  list.appendChild(item);
+ });
+ list.querySelectorAll("[data-history-detail]").forEach(btn=>btn.addEventListener("click",()=>showHistoryDetail(btn.dataset.historyDetail)));
+}
+function showHistoryDetail(id){
+ const s=state.sessions.find(x=>x.id===id);const box=document.getElementById("historyDetail");if(!s)return;
+ box.classList.remove("hidden");box.innerHTML="";
+ const title=document.createElement("h3");title.textContent=s.storyTitle||"故事冒險";box.appendChild(title);
+ const p=document.createElement("p");p.textContent=`${s.themeName||""} · 已回報 ${s.reportedCount||0}/5 · ${s.status==="endedEarly"?"提前結束":"完成／結束"}`;box.appendChild(p);
+ (s.tasks||[]).forEach(t=>{const q=document.createElement("p");q.textContent=`${t.index}. ${t.title}：${t.status==="reported"?(responseNames[t.response]||t.response)+(t.note?"（"+t.note+"）":""):"未回報"}`;box.appendChild(q);});
+ if(s.summaryNote){const n=document.createElement("p");n.textContent="家長備註："+s.summaryNote;box.appendChild(n);}
+ box.scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+function showModal(title,text,onConfirm){
+ document.getElementById("modalTitle").textContent=title;document.getElementById("modalText").textContent=text;
+ pendingModalAction=onConfirm;document.getElementById("modalBackdrop").style.display="flex";
+}
+function closeModal(){document.getElementById("modalBackdrop").style.display="none";pendingModalAction=null;}
+function askClear(){
+ showModal("清除所有本機模擬資料？","這會清除本機保存的設定、收藏與歷程，且無法復原。確定要清除嗎？",()=>{
+  localStorage.removeItem(STORE_KEY);state=defaultState();currentSession=null;selectedTheme="adventure";persist();loadChildForm();renderHomeRewards();renderCollection();renderHistory();closeModal();show("home");toast("已清除本機模擬資料。");
+ });
+}
+function demoFlow(){
+ loadChildForm();selectedTheme="adventure";chooseTheme("adventure");saveChildFromForm();buildStory();
+ // Demo mode explicitly confirms all needed props so the whole flow can be shown in one click.
+ const needed=new Set(currentSession.tasks.flatMap(t=>t.usedAssetIds));
+ state.assets.forEach(a=>a.availableToday=needed.has(a.id));
+ persist();renderAssets();
+ document.getElementById("assetMessage").textContent="一鍵示範已替你勾選本次故事所需的示範素材。你仍可取消勾選，測試素材不足時的處理流程。";
+ toast("完整示範已準備好；你可以檢查素材或直接開始。");
+}
+function init(){
+ loadChildForm();renderHomeRewards();
+ document.querySelectorAll("[data-nav]").forEach(b=>b.addEventListener("click",()=>nav(b.dataset.nav)));
+ document.querySelectorAll("[data-theme]").forEach(b=>b.addEventListener("click",()=>{loadChildForm();show("setup");setTimeout(()=>chooseTheme(b.dataset.theme),0);}));
+ document.getElementById("startBtn").addEventListener("click",()=>{loadChildForm();show("setup");});
+ document.getElementById("demoBtn").addEventListener("click",demoFlow);
+ document.getElementById("toThemes").addEventListener("click",()=>{saveChildFromForm();show("themes");});
+ document.querySelectorAll("[data-theme-choice]").forEach(b=>b.addEventListener("click",()=>chooseTheme(b.dataset.themeChoice)));
+ document.getElementById("makeStory").addEventListener("click",buildStory);
+ document.getElementById("backThemes").addEventListener("click",()=>show("themes"));
+ document.getElementById("assetList").addEventListener("change",e=>{if(e.target.matches("[data-asset-check]"))syncAssetChecks();});
+ document.getElementById("replaceBtn").addEventListener("click",replaceMissing);
+ document.getElementById("beginGame").addEventListener("click",beginGame);
+ document.getElementById("responseOptions").addEventListener("click",e=>{const b=e.target.closest("[data-response]");if(b)selectResponse(b.dataset.response);});
+ document.getElementById("childWords").addEventListener("input",()=>{if(selectedResponse)selectResponse(selectedResponse);});
+ document.getElementById("reportBtn").addEventListener("click",recordTask);
+ document.getElementById("restBtn").addEventListener("click",()=>showModal("休息一下？","可以暫停遊戲。你可以稍後繼續，也可以結束這次冒險。",()=>{closeModal();toast("已暫停。若要保存已回報內容，請選擇結束冒險。");}));
+ document.getElementById("gameEndTop").addEventListener("click",()=>showModal("結束這次冒險？","已回報的內容會被保存到摘要；其他任務會標示為未回報。",()=>{closeModal();finishSession(true);}));
+ document.getElementById("saveSummary").addEventListener("click",saveSummary);
+ document.getElementById("newAdventure").addEventListener("click",newAdventure);
+ document.getElementById("newFromHistory").addEventListener("click",newAdventure);
+ document.getElementById("clearData").addEventListener("click",askClear);
+ document.getElementById("clearFromInfo").addEventListener("click",askClear);
+ document.getElementById("modalCancel").addEventListener("click",closeModal);
+ document.getElementById("modalConfirm").addEventListener("click",()=>{const fn=pendingModalAction;closeModal();if(fn)fn();});
+ document.getElementById("modalBackdrop").addEventListener("click",e=>{if(e.target.id==="modalBackdrop")closeModal();});
+}
+init();
+})();
+</script>
+</body>
+</html>
